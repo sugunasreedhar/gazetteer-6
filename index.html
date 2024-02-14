@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAZETTEER</title>
+    <link rel="icon" type="image/x-icon" href="images/icons/favicon.png">
+    <script src="libs/jQuery/jquery.js"></script>
+    <script src="libs/leaflet/leaflet.js"></script>
+    <script src="libs/bootstrap-5.3.2-dist/js/bootstrap.min.js"></script>
+    <script src="libs/dayjs/dayjs.min.js"></script>
+    <link rel="stylesheet" href="css/easy-button.css" />
+    <link rel="stylesheet" href="css/main.css?v=32423">
+    <link rel="stylesheet" href="libs/bootstrap-5.3.2-dist/css/bootstrap.min.css" >
+    <link rel="stylesheet" href="libs/leaflet/leaflet.css"/>
+    <link rel="stylesheet" href="libs/maplibre/maplibre-gl.css"/>
+    <link rel="stylesheet" href="libs/fontawesome-free-5.15.4-web/css/all.min.css"/>
+    <link rel="stylesheet" href="libs/leaflet.markercluster/dist/MarkerCluster.Default.css">
+</head>
+<body>
+   
+<div class="loading">Loading&#8230;</div>
+<form action="">
+    <div id="selectContainer"> 
+        <select name="" class="form-control countrySelect" id="selectedCountry">
+            <!-- Country options will be dynamically added here using JavaScript -->
+        </select>
+    </div>
+</form>
+    
+<div id="map"></div> 
+        
+
+
+
+    <div class="modal fade" id="countryInfoModal" tabindex="-1" role="dialog" aria-labelledby="countryInfoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+            <div class="modal-content"> 
+                <div class="modal-header bg-success bg-gradient text-white">
+                <h5 class="modal-title">Overview</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="modal-body">
+                <div class="topDetails">
+                    <img id="country-flag" src=""><br>
+                    <h5>
+                        <span id="general-info-title"></span>
+                    </h5>
+                </div>
+                    <table class="table table-striped">
+                        <tbody>
+                            <tr>
+                                <td>Region</td>
+                                <td><span id="region"></span></td>
+                            </tr>
+                            <tr>
+                                <td>Sub Region</td>
+                                <td><span id="sub-region"></span></td>
+                            </tr>
+                            <tr>
+                                <td>Time Zone</td>
+                                <td><span id="timezones"></span></td>
+                            </tr>
+                            <tr>
+                                <td>Capital city</td>
+                                <td><span id="capital-city"></span></td>
+                            </tr>
+                            <tr>
+                                <td>Lanugages spoken</td>
+                                <td><span id="languages-spoken"></span></td>
+                            </tr>
+                            <tr>
+                                <td>Currency</td>
+                                <td><span id="currencies"></span></td>
+                            </tr>
+                            <tr>
+                                <td>Currency Exchange Rate</td>
+                                <td><span id="currenciesExchangeRate"></span></td>
+                            </tr>
+                            <tr>
+                                <td>Population</td>
+                                <td><span id="population"></span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="currencyInfoModal" tabindex="-1" role="dialog" aria-labelledby="currencyInfoModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-success bg-gradient text-white">
+        <h5 class="modal-title">Currency Exchange</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label id="currency"></label>
+          <input type="number" class="form-control" id="currencyValue" placeholder="Enter USD" required>
+        </div>
+        <div class="mb-3">
+            <label for="currencySelector">Convert To</label>
+            <select class="form-select" id="currencySelector" required>
+                <option value='ARS'>Argentine Peso (ARS)</option>
+                <option value='AUD'>Australian Dollar (AUD)</option>
+                <option value='BHD'>Bahraini Dinar (BHD)</option>
+                <option value='BWP'>Botswana Pula (BWP)</option>
+                <option value='BRL'>Brazilian Real (BRL)</option>
+                <option value='BND'>Bruneian Dollar (BND)</option>
+                <option value='BGN'>Bulgarian Lev (BGN)</option>
+                <option value='CAD'>Canadian Dollar (CAD)</option>
+                <option value='CLP'>Chilean Peso (CLP)</option>
+                <option value='CNY'>Chinese Yuan Renminbi (CNY)</option>
+                <option value='COP'>Colombian Peso (COP)</option>
+                <option value='CZK'>Czech Koruna (CZK)</option>
+                <option value='DKK'>Danish Krone (DKK)</option>
+                <option value='AED'>Emirati Dirham (AED)</option>
+                <option value='EUR'>Euro (EUR)</option>
+                <option value='HKD'>Hong Kong Dollar (HKD)</option>
+                <option value='HUF'>Hungarian Forint (HUF)</option>
+                <option value='ISK'>Icelandic Krona (ISK)</option>
+                <option value='INR'>Indian Rupee (INR)</option>
+                <option value='IDR'>Indonesian Rupiah (IDR)</option>
+                <option value='IRR'>Iranian Rial (IRR)</option>
+                <option value='ILS'>Israeli Shekel (ILS)</option>
+                <option value='JPY'>Japanese Yen (JPY)</option>
+                <option value='KZT'>Kazakhstani Tenge (KZT)</option>
+                <option value='KWD'>Kuwaiti Dinar (KWD)</option>
+                <option value='LYD'>Libyan Dinar (LYD)</option>
+                <option value='MYR'>Malaysian Ringgit (MYR)</option>
+                <option value='MUR'>Mauritian Rupee (MUR)</option>
+                <option value='MXN'>Mexican Peso (MXN)</option>
+                <option value='NPR'>Nepalese Rupee (NPR)</option>
+                <option value='NZD'>New Zealand Dollar (NZD)</option>
+                <option value='NOK'>Norwegian Krone (NOK)</option>
+                <option value='OMR'>Omani Rial (OMR)</option>
+                <option value='PKR'>Pakistani Rupee (PKR)</option>
+                <option value='PHP'>Philippine Peso (PHP)</option>
+                <option value='PLN'>Polish Zloty (PLN)</option>
+                <option value='QAR'>Qatari Riyal (QAR)</option>
+                <option value='RON'>Romanian New Leu (RON)</option>
+                <option value='RUB'>Russian Ruble (RUB)</option>
+                <option value='SAR'>Saudi Arabian Riyal (SAR)</option>
+                <option value='SGD'>Singapore Dollar (SGD)</option>
+                <option value='ZAR'>South African Rand (ZAR)</option>
+                <option value='KRW'>South Korean Won (KRW)</option>
+                <option value='LKR'>Sri Lankan Rupee (LKR)</option>
+                <option value='SEK'>Swedish Krona (SEK)</option>
+                <option value='CHF'>Swiss Franc (CHF)</option>
+                <option value='TWD'>Taiwan New Dollar (TWD)</option>
+                <option value='THB'>Thai Baht (THB)</option>
+                <option value='TTD'>Trinidadian Dollar (TTD)</option>
+                <option value='TRY'>Turkish Lira (TRY)</option>
+                <option value='USD' selected>US Dollar (USD)</option>
+            </select>            
+            </div>
+        <table class="table table-striped">
+          <tbody>
+            <tr>     
+            <label>USD</label>
+              <td text-align="left" id="currencyExchangeRate"></td>
+            </tr>
+            <tr>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+ 
+ 
+
+    <div class="modal fade" id="wikiModal" tabindex="-1" role="dialog" aria-labelledby="wikiModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-success bg-gradient text-white">
+                    <h5 class="modal-title" id="wikiModalLabel">Wikipedia Information</h5> 
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Wikipedia information will be displayed here -->
+                    <div id="wiki-info"></div>
+                </div> 
+            </div>
+        </div>
+    </div>
+
+    
+
+    <div class="modal fade" id="weatherModal" tabindex="-1" role="dialog" aria-labelledby="weatherModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-success bg-gradient text-white">
+                    <h5 class="modal-title" id="weatherModalLabel">Weather Information</h5> 
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Weather information will be displayed here -->
+                    <div id="weather-info">
+ 
+                    </div>
+                </div> 
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="newsModal" tabindex="-1" role="dialog" aria-labelledby="newsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-success bg-gradient text-white">
+                    <h5 class="modal-title" id="newsModalLabel">News</h5> 
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Wikipedia information will be displayed here -->
+                    <div id="news-info"></div>
+                </div> 
+            </div>
+        </div>
+    </div>
+
+
+
+ 
+    <script src="libs/maplibre/maplibre-gl.js"></script>
+    <script src="libs/leaflet.extra-markers.js_1.2.2/unpkg/leaflet.extra-markers.js"></script>
+    <script src="libs/leaflet-providers.js_1.13.0/unpkg/leaflet-providers.js"></script>
+    <script src="libs/leaflet.markercluster-src.js_1.5.3/unpkg/leaflet.markercluster-src.js"></script>
+    <script src="libs/fontawesome-free-5.15.4-web/js/all.min.js"></script>
+    <script src="libs/lodash/lodash.min.js"></script>
+    <script src="scripts/js/easy-button.js"></script>
+    <script src="scripts/js/main.js"></script>
+   
+</body>
+</html>
